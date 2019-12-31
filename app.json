@@ -1,0 +1,20 @@
+{
+  "name": "Ladder League",
+  "description": "Application for running a ladder league",
+  "repository": "https://github.com/cscorley/ladder-league",
+  "success_url": "/",
+  "website": "https://github.com/cscorley/ladder-league",
+  "buildpacks": [
+    {
+      "url": "emk/rust"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ]
+}
