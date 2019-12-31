@@ -7,9 +7,6 @@
   "buildpacks": [
     {
       "url": "emk/rust"
-    },
-    {
-      "url": "heroku/nodejs"
     }
   ],
   "addons": [
