@@ -1,18 +1,19 @@
 table! {
-    ladders (id) {
+    leagues (id) {
         id -> Int4,
-        updated_at -> Timestamptz
+        updated_at -> Timestamptz,
     }
 }
 
 table! {
     players (id) {
         id -> Int4,
+        updated_at -> Timestamptz,
         name -> Varchar,
-        updated_at -> Timestamptz
     }
 }
 
-// joinable!(players -> ladders (ladder_id));
-
-allow_tables_to_appear_in_same_query!(ladders, players);
+allow_tables_to_appear_in_same_query!(
+    leagues,
+    players,
+);
