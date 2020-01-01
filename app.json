@@ -7,6 +7,9 @@
   "buildpacks": [
     {
       "url": "https://github.com/emk/heroku-buildpack-rust"
+    },
+    {
+      "url": "https://github.com/sgrif/heroku-buildpack-diesel"
     }
   ],
   "addons": [

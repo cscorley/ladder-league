@@ -1,2 +1,2 @@
 web: ./target/release/ladder-league
-release: diesel migration run
+release: ./bin/diesel migration run
