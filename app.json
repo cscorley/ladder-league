@@ -6,7 +6,7 @@
   "website": "https://github.com/cscorley/ladder-league",
   "buildpacks": [
     {
-      "url": "https://github.com/emk/heroku-buildpack-rust.git"
+      "url": "https://github.com/emk/heroku-buildpack-rust"
     }
   ],
   "addons": [
