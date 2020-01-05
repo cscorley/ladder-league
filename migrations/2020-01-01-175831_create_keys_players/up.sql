@@ -1,19 +1,21 @@
 -- Your SQL goes here
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE leagues
+CREATE TABLE ladders
 (
     id SERIAL PRIMARY KEY,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    name VARCHAR NOT NULL
 );
 
 CREATE TABLE players
 (
     id SERIAL PRIMARY KEY,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    --    league_id INTEGER REFERENCES keys(id) NOT NULL,
-    name VARCHAR NOT NULL
+    name VARCHAR NOT NULL,
+    ladder_id INTEGER REFERENCES ladders(id) NOT NULL,
+    parent_player_id INTEGER REFERENCES players(id) NULL
 );
 
-SELECT diesel_manage_updated_at('leagues');
+SELECT diesel_manage_updated_at('ladders');
 SELECT diesel_manage_updated_at('players');

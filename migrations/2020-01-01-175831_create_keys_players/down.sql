@@ -1,3 +1,4 @@
 -- This file should undo anything in `up.sql`
-DROP TABLE players;
-DROP TABLE leagues;
+DROP TABLE IF EXISTS players;
+DROP TABLE IF EXISTS leagues;
+DROP TABLE IF EXISTS ladders;
