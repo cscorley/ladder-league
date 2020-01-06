@@ -16,8 +16,8 @@ pub struct Ladder {
 #[derive(Identifiable, Queryable, Associations, PartialEq, Debug, Deserialize, Serialize)]
 pub struct Player {
     pub id: i32,
-    pub name: String,
     pub updated_at: DateTime<Utc>,
+    pub name: String,
     pub ladder_id: i32,
     pub parent_player_id: Option<i32>,
 }

@@ -31,12 +31,25 @@ impl Responder for PlayerInfo {
 pub async fn get_player(info: web::Path<(i32,)>, pool: web::Data<Pool>) -> impl Responder {
     let conn = &pool.get().unwrap();
 
-    let results = Player::by_id(conn, info.0);
-
-    PlayerInfo {
-        id: info.0,
-        ladder_id: info.0,
-        name: "you".to_string(),
+    let result = Player::by_id(conn, info.0);
+    match result {
+        Ok(p) => match p {
+            Some(pp) => PlayerInfo {
+                id: pp.id,
+                ladder_id: pp.ladder_id,
+                name: pp.name,
+            },
+            None => PlayerInfo {
+                id: info.0,
+                ladder_id: info.0,
+                name: "none".to_string(),
+            },
+        },
+        Err(e) => PlayerInfo {
+            id: info.0,
+            ladder_id: info.0,
+            name: e.to_string(),
+        },
     }
 }
 
