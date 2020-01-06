@@ -1,22 +1,22 @@
+#[macro_use]
+extern crate diesel;
+extern crate chrono;
+
 use actix_files;
 use actix_web::Result;
 use actix_web::{web, App, HttpRequest, HttpServer, Responder};
-use actix_web::{Error, HttpResponse};
+use diesel::prelude::*;
 use diesel::{r2d2::ConnectionManager, r2d2::Pool, PgConnection};
-use futures::future::{ready, Ready};
 use serde::Deserialize;
-use serde::Serialize;
 use std::env;
 use std::path::Path;
 
+mod models;
+mod player_handler;
+mod schema;
+
 #[derive(Deserialize)]
 struct LadderInfo {
-    name: String,
-}
-
-#[derive(Deserialize, Serialize)]
-struct PlayerInfo {
-    ladder_id: u32,
     name: String,
 }
 
@@ -27,20 +27,6 @@ struct SwapPlayerInfo {
     loser_player_id: u32,
 }
 
-impl Responder for PlayerInfo {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-
-        // Create response and set content type
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
-}
-
 async fn get_ladder(info: web::Path<(u32,)>) -> Result<String> {
     Ok(format!("Welcome {}!", info.0))
 }
@@ -48,28 +34,6 @@ async fn get_ladder(info: web::Path<(u32,)>) -> Result<String> {
 async fn add_ladder(info: web::Json<LadderInfo>) -> Result<String> {
     Ok(format!("Welcome {}!", info.name))
 }
-
-async fn get_player(info: web::Path<(u32,)>) -> impl Responder {
-    PlayerInfo {
-        ladder_id: info.0,
-        name: "you".to_string(),
-    }
-}
-
-async fn update_player(info: web::Json<PlayerInfo>) -> Result<String> {
-    Ok(format!(
-        "Welcome {} for ladder {}!",
-        info.name, info.ladder_id
-    ))
-}
-
-async fn add_player(info: web::Json<PlayerInfo>) -> Result<String> {
-    Ok(format!(
-        "Welcome {} for ladder {}!",
-        info.name, info.ladder_id
-    ))
-}
-
 async fn player_leap(info: web::Json<SwapPlayerInfo>) -> Result<String> {
     Ok(format!(
         "Welcome {} {} {}!",
@@ -122,10 +86,10 @@ async fn main() -> std::io::Result<()> {
                     .route("/{name}", web::get().to(greet))
                     .route("/ladder/{id}", web::get().to(get_ladder))
                     .route("/ladder", web::post().to(add_ladder))
-                    .route("/player/{id}", web::get().to(get_player))
-                    .route("/player", web::post().to(add_player))
-                    .route("/ladder/player-leap", web::get().to(player_leap))
-                    .route("/player/{id}", web::put().to(update_player)),
+                    .route("/ladder/player-leap", web::post().to(player_leap))
+                    .route("/player/{id}", web::get().to(player_handler::get_player))
+                    .route("/player", web::post().to(player_handler::add_player))
+                    .route("/player/{id}", web::put().to(player_handler::update_player)),
             )
             .service(actix_files::Files::new("/", path).index_file("index.html"))
     })

@@ -1,4 +1,4 @@
-use super::schema::{ladders, players};
+use super::schema::*;
 use chrono::{DateTime, Utc};
 use diesel::r2d2;
 use diesel::PgConnection;
@@ -18,14 +18,14 @@ pub struct Player {
     pub name: String,
     pub updated_at: DateTime<Utc>,
     pub ladder_id: i32,
-    pub parent_player_id: i32,
+    pub parent_player_id: Option<i32>,
 }
 
 #[derive(Insertable)]
 #[table_name = "players"]
 pub struct NewPlayer {
     pub ladder_id: i32,
-    pub parent_player_id: Nullable<i32>,
+    pub parent_player_id: Option<i32>,
     pub name: String,
 }
 
