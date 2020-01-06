@@ -5,7 +5,6 @@ extern crate chrono;
 use actix_files;
 use actix_web::Result;
 use actix_web::{web, App, HttpRequest, HttpServer, Responder};
-use diesel::prelude::*;
 use diesel::{r2d2::ConnectionManager, r2d2::Pool, PgConnection};
 use serde::Deserialize;
 use std::env;

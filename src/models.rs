@@ -1,8 +1,9 @@
-use super::schema::*;
+use crate::schema::*;
 use chrono::{DateTime, Utc};
+use diesel::prelude::*;
 use diesel::r2d2;
 use diesel::PgConnection;
-use diesel::{self, Associations, Identifiable, Insertable, Queryable};
+use diesel::{self, Associations, Identifiable, Insertable, QueryResult, Queryable};
 use serde::{Deserialize, Serialize};
 
 #[derive(Identifiable, Queryable, Associations, PartialEq, Debug, Deserialize, Serialize)]
@@ -37,3 +38,9 @@ pub struct NewLadder {
 
 // type alias to use in multiple places
 pub type Pool = r2d2::Pool<r2d2::ConnectionManager<PgConnection>>;
+
+impl Player {
+    pub fn by_id(conn: &PgConnection, id: i32) -> QueryResult<Option<Self>> {
+        players::table.find(id).first(conn).optional()
+    }
+}

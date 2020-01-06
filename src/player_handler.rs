@@ -1,13 +1,11 @@
 use actix_web::Result;
 use actix_web::{web, HttpRequest, Responder};
 use actix_web::{Error, HttpResponse};
-use diesel::prelude::*;
 use futures::future::{ready, Ready};
 use serde::Deserialize;
 use serde::Serialize;
 
 use crate::models::*;
-use crate::schema::players::dsl::*;
 
 #[derive(Deserialize, Serialize)]
 pub struct PlayerInfo {
@@ -33,10 +31,7 @@ impl Responder for PlayerInfo {
 pub async fn get_player(info: web::Path<(i32,)>, pool: web::Data<Pool>) -> impl Responder {
     let conn = &pool.get().unwrap();
 
-    let results = players
-        .find(info.0)
-        .first::<Player>(conn)
-        .expect("Error loading players");
+    let results = Player::by_id(conn, info.0);
 
     PlayerInfo {
         id: info.0,
