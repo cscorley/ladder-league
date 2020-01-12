@@ -14,7 +14,7 @@ CREATE TABLE players
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     name VARCHAR NOT NULL,
     ladder_id INTEGER REFERENCES ladders(id) NOT NULL,
-    parent_player_id INTEGER REFERENCES players(id) NULL
+    ranking INTEGER NOT NULL
 );
 
 SELECT diesel_manage_updated_at('ladders');

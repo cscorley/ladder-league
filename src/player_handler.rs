@@ -11,10 +11,9 @@ use crate::models::*;
 pub struct PlayerInfo {
     ladder_id: i32,
     name: String,
-    id: i32,
 }
 
-impl Responder for PlayerInfo {
+impl Responder for Player {
     type Error = Error;
     type Future = Ready<Result<HttpResponse, Error>>;
 
@@ -28,43 +27,36 @@ impl Responder for PlayerInfo {
     }
 }
 
+impl From<PlayerInfo> for NewPlayer {
+    fn from(pp: PlayerInfo) -> Self {
+        NewPlayer {
+            ladder_id: pp.ladder_id,
+            name: pp.name,
+            ranking: 1,
+        }
+    }
+}
+
 pub async fn get_player(info: web::Path<(i32,)>, pool: web::Data<Pool>) -> impl Responder {
     let conn = &pool.get().unwrap();
 
-    let result = Player::by_id(conn, info.0);
-    match result {
-        Ok(p) => match p {
-            Some(pp) => PlayerInfo {
-                id: pp.id,
-                ladder_id: pp.ladder_id,
-                name: pp.name,
-            },
-            None => PlayerInfo {
-                id: info.0,
-                ladder_id: info.0,
-                name: "none".to_string(),
-            },
-        },
-        Err(e) => PlayerInfo {
-            id: info.0,
-            ladder_id: info.0,
-            name: e.to_string(),
-        },
-    }
+    Player::by_id(conn, info.0)
 }
 
-pub async fn update_player(info: web::Json<PlayerInfo>) -> impl Responder {
-    PlayerInfo {
-        id: info.id,
-        ladder_id: info.ladder_id,
-        name: info.name.to_string(),
-    }
+pub async fn add_player(info: web::Json<PlayerInfo>, pool: web::Data<Pool>) -> impl Responder {
+    let conn = &pool.get().unwrap();
+
+    Player::add(conn, NewPlayer::from(info.0))
 }
 
-pub async fn add_player(info: web::Json<PlayerInfo>) -> impl Responder {
-    PlayerInfo {
-        id: info.id,
-        ladder_id: info.ladder_id,
-        name: info.name.to_string(),
-    }
+#[derive(Deserialize)]
+pub struct SwapPlayerInfo {
+    winner_player_id: i32,
+    loser_player_id: i32,
+}
+
+pub async fn player_leap(info: web::Json<SwapPlayerInfo>, pool: web::Data<Pool>) -> impl Responder {
+    let conn = &pool.get().unwrap();
+
+    Player::leap(conn, info.winner_player_id, info.loser_player_id).0
 }

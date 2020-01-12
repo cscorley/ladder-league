@@ -12,7 +12,7 @@ table! {
         updated_at -> Timestamptz,
         name -> Varchar,
         ladder_id -> Int4,
-        parent_player_id -> Nullable<Int4>,
+        ranking -> Int4,
     }
 }
 
