@@ -10,6 +10,9 @@
     },
     {
       "url": "https://github.com/sgrif/heroku-buildpack-diesel"
+    },
+    {
+      "url": "heroku/nodejs"
     }
   ],
   "addons": [
